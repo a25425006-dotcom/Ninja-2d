@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Game Ninja 2D</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: url('https://i.imgur.com/2nJ4wZv.jpg') no-repeat center center;
+      background-size: cover;
+    }
+    canvas {
+      display: block;
+    }
+    #controls {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      border-radius: 10px;
+      background-color: #111;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="game" width="800" height="400"></canvas>
+  <div id="controls">
+    <button onclick="moveLeft()">⬅️</button>
+    <button onclick="moveRight()">➡️</button>
+    <button onclick="attack()">🗡️</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+
+    const ninjaImg = new Image();
+    ninjaImg.src = "https://i.imgur.com/PoY0Eid.png"; // ninja sprite (transparent background)
+
+    const slashSound = new Audio("https://cdn.pixabay.com/audio/2022/03/01/audio_2a6ab5cfa5.mp3");
+
+    let ninja = {
+      x: 100,
+      y: 280,
+      width: 80,
+      height: 100,
+      attacking: false,
+    };
+
+    function drawNinja() {
+      ctx.drawImage(ninjaImg, ninja.x, ninja.y, ninja.width, ninja.height);
+      if (ninja.attacking) {
+        ctx.beginPath();
+        ctx.moveTo(ninja.x + ninja.width, ninja.y + ninja.height / 2);
+        ctx.lineTo(ninja.x + ninja.width + 30, ninja.y + ninja.height / 2);
+        ctx.strokeStyle = "white";
+        ctx.lineWidth = 5;
+        ctx.stroke();
+      }
+    }
+
+    function clearCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function gameLoop() {
+      clearCanvas();
+      drawNinja();
+      requestAnimationFrame(gameLoop);
+    }
+
+    function moveLeft() {
+      ninja.x -= 20;
+    }
+
+    function moveRight() {
+      ninja.x += 20;
+    }
+
+    function attack() {
+      if (!ninja.attacking) {
+        ninja.attacking = true;
+        slashSound.play();
+        setTimeout(() => {
+          ninja.attacking = false;
+        }, 300);
+      }
+    }
+
+    gameLoop();
+  </script>
+</body>
+</html>
